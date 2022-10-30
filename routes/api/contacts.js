@@ -7,6 +7,11 @@ const {
   getContactById,
 } = require("../../models/contacts.js");
 
+const {
+  addContactValidation,
+  putContactValidation,
+} = require('../../joiSchema/schemaValidation.js');
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {

@@ -1,6 +1,6 @@
 const fs = require("fs").promises;
 const path = require("path");
-const contactsPath = path.resolve("./models/ontacts.json");
+const contactsPath = path.resolve("./models/contacts.json");
 
 const listContacts = async () => {
   const data = await fs.readFile(contactsPath, "utf-8");
@@ -26,7 +26,7 @@ const removeContact = async (contactId) => {
 };
 
 const addContact = async (name, email, phone) => {
-  const data = await fs.readFite(contactsPath, "utf8");
+  const data = await fs.readFile(contactsPath, "utf8");
   const parsedData = JSON.parse(data);
   const newContact = { name, email, phone, id: String(Date.now()) };
   parsedData.push(newContact);
@@ -37,7 +37,7 @@ const addContact = async (name, email, phone) => {
 const updateContact = async (contactId, body) => {
   const data = await fs.readFile(contactsPath, "utf-8");
   const parsedData = JSON.parse(data);
-  const contactIndex = parsedData.findindex((item) => item.id === contactId);
+  const contactIndex = parsedData.findIndex((item) => item.id === contactId);
   const ContactById = parsedData[contactIndex];
   if (contactIndex === -1) {
     return;
