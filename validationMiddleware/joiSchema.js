@@ -1,11 +1,11 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 module.exports = {
   addContactValidation: (req, res, next) => {
     const schema = Joi.object({
       name: Joi.string().alphanum().min(3).max(30).required(),
       email: Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
         .required(),
       phone: Joi.number().required(),
     });
@@ -21,7 +21,7 @@ module.exports = {
     const schema = Joi.object({
       name: Joi.string().alphanum().min(3).max(30).optional(),
       email: Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
         .optional(),
       phone: Joi.number().optional(),
     });
