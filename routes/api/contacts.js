@@ -48,7 +48,7 @@ router.put(
   isValidId, 
   putContactValidation, 
   tryCatchWrapper(updateContactController)
-  );
+);
 
 router.patch(
   '/:contactId/favorite',
