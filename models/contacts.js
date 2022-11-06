@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const { Contact } = require('../db/model');
 
 
@@ -31,7 +32,6 @@ const updateContact = async (contactId, body) => {
 const updateStatusContact = async (contactId, favorite) => {
   await Contact.findByIdAndUpdate(contactId, { favorite }, { runValidators: true });
   const updatedContact = Contact.findById(contactId);
-
   return updatedContact;
 };
 
