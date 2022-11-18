@@ -4,7 +4,7 @@ const {
   login,
   patchSubscription,
   getCurrent,
-} = require("../../controllers/userController");
+} = require("../../controllers/usersController");
 
 const { tryCatchWrapper } = require("../../helpers/index");
 const {

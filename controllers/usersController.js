@@ -5,7 +5,7 @@ const {
   getCurrentUser,
 } = require("../models/users");
 
-const signupUserController = async (req, res) => {
+const signup = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await signupUser(email, password);
@@ -16,14 +16,14 @@ const signupUserController = async (req, res) => {
   });
 };
 
-const loginUserController = async (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   const token = await loginUser(email, password);
   res.status(200).json({ status: "success", token });
 };
 
-const patchSubscriptionUserController = async (req, res) => {
+const patchSubscription = async (req, res) => {
   const { _id } = req.user;
   const { subscription } = req.body;
 
@@ -32,7 +32,7 @@ const patchSubscriptionUserController = async (req, res) => {
   res.status(200).json({ message: "success", user: updatedUser });
 };
 
-const getCurrentUserController = async (req, res) => {
+const getCurrent = async (req, res) => {
   const { _id } = req.user;
 
   const user = await getCurrentUser(_id);
@@ -41,8 +41,8 @@ const getCurrentUserController = async (req, res) => {
 };
 
 module.exports = {
-  signupUserController,
-  loginUserController,
-  patchSubscriptionUserController,
-  getCurrentUserController,
+  signup,
+  login,
+  patchSubscription,
+  getCurrent,
 };
