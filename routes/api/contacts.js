@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 
 const {
   addContactValidation,
   putContactValidation,
   patchContactFavoriteValidation,
-} = require('../../validationMiddleware/joiSchema');
+} = require("../../validationMiddleware/joiSchema");
 
-const { isValidId } = require('../../validationMiddleware/mongooseSchema');
+const { isValidId } = require("../../validationMiddleware/mongooseSchema");
 
 const {
   listContactsController,
@@ -15,43 +15,39 @@ const {
   removeContactController,
   updateContactController,
   updateStatusContactController,
-} = require('../../controllers/contactsController');
+} = require("../../controllers/contactsController");
 
-const { tryCatchWrapper } = require('../../helpers/index');
-
+const { tryCatchWrapper } = require("../../helpers/index");
+const { authMiddleware } = require("../../validationMiddleware/authMiddleware");
 const router = express.Router();
 
-router.get(
-  '/',
-  tryCatchWrapper(listContactsController)
-);
+router.use(authMiddleware);
 
-router.get(
-  '/:contactId', 
-  isValidId, 
-  tryCatchWrapper(getContactByIdController)
-);
+router.get("/", tryCatchWrapper(listContactsController));
 
-router.post('/', 
-addContactValidation, 
-tryCatchWrapper(addContactValidationController)
+router.get("/:contactId", isValidId, tryCatchWrapper(getContactByIdController));
+
+router.post(
+  "/",
+  addContactValidation,
+  tryCatchWrapper(addContactValidationController)
 );
 
 router.delete(
-  '/:contactId', 
-  isValidId, 
+  "/:contactId",
+  isValidId,
   tryCatchWrapper(removeContactController)
 );
 
 router.put(
-  '/:contactId', 
-  isValidId, 
-  putContactValidation, 
+  "/:contactId",
+  isValidId,
+  putContactValidation,
   tryCatchWrapper(updateContactController)
 );
 
 router.patch(
-  '/:contactId/favorite',
+  "/:contactId/favorite",
   isValidId,
   patchContactFavoriteValidation,
   tryCatchWrapper(updateStatusContactController)
