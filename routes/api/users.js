@@ -1,6 +1,6 @@
 const express = require("express");
 const {
-  singup,
+  signup,
   login,
   patchSubscription,
   getCurrent,
@@ -17,7 +17,7 @@ const { authMiddleware } = require("../../validationMiddleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/singup", loginValidation, tryCatchWrapper(singup));
+router.post("/signup", loginValidation, tryCatchWrapper(signup));
 router.post("/login", loginValidation, tryCatchWrapper(login));
 router.get("/logout", tryCatchWrapper(logoutMiddleware));
 router.get("/current", authMiddleware, tryCatchWrapper(getCurrent));
