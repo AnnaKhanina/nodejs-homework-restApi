@@ -7,12 +7,8 @@ const {
 } = require("../../controllers/usersController");
 
 const { tryCatchWrapper } = require("../../helpers/index");
-const {
-  loginValidation,
-} = require("../../validationMiddleware/loginValidation");
-const {
-  logoutMiddleware,
-} = require("../../validationMiddleware/logoutMiddleware");
+const { loginValidation } = require("../../validationMiddleware/loginValidation");
+const { logoutMiddleware } = require("../../validationMiddleware/logoutMiddleware");
 const { authMiddleware } = require("../../validationMiddleware/authMiddleware");
 
 const router = express.Router();
