@@ -18,7 +18,6 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-
   const token = await loginUser(email, password);
   res.status(200).json({ status: "success", token });
 };
@@ -26,17 +25,19 @@ const login = async (req, res) => {
 const patchSubscription = async (req, res) => {
   const { _id } = req.user;
   const { subscription } = req.body;
-
   const updatedUser = await patchSubscriptionUser(_id, subscription);
-
   res.status(200).json({ message: "success", user: updatedUser });
+};
+
+const logout = async (req, res) => {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: null }, { runValidators: true });
+  res.status(200).json({ message: 'Success logout' });
 };
 
 const getCurrent = async (req, res) => {
   const { _id } = req.user;
-
   const user = await getCurrentUser(_id);
-
   res.status(200).json({ status: "success", user });
 };
 
@@ -44,5 +45,6 @@ module.exports = {
   signup,
   login,
   patchSubscription,
+  logout,
   getCurrent,
 };

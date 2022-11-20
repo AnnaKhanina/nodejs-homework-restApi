@@ -1,13 +1,11 @@
 const { Contact } = require('../db/model');
 
-
 const listContacts = async (owner, page, limit, favorite) => {
-  console.log(favorite);
-  const skip = (parseInt(page) - 1) * parseInt(limit);
+    const skip = (parseInt(page) - 1) * parseInt(limit);
     if (favorite) {
-      const data = await Contact.find({ $and: [{ owner }, { favorite: JSON.parse(favorite) }] })
+      const data = await Contact.find({ $and: [{ owner }, { favorite }] })
         .skip(skip)
-        .limit(parseInt(limit));
+        .limit((limit));
       return data;
     } else {
       const data = await Contact.find({ owner }).skip(skip).limit(parseInt(limit));
@@ -31,15 +29,13 @@ const addContact = async ({ name, email, phone, favorite }, owner) => {
   return newContact;
 };
 
-const updateContact = async (contactId, owner, body) => {
-  await Contact.findOneAndUpdate( { $and: [{ owner }, { _id: contactId }] }, { $set: body }, { runValidators: true });
-  const updatedContact = await Contact.find({ $and: [{ owner }, { _id: contactId }] });
+const updateContact = async (contactId, owner, body) => {  
+  const updatedContact = await Contact.findOneAndUpdate({ $and: [{ owner }, { _id: contactId }] }, { $set: body }, { runValidators: true, new: true });
   return updatedContact;
 };
 
 const updateStatusContact = async (contactId, owner, favorite) => {
-  await Contact.findOneAndUpdate( { $and: [{ owner }, { _id: contactId }] },{ favorite }, { runValidators: true });
-  const updatedContact = await Contact.find({ $and: [{ owner }, { _id: contactId }] });
+  const updatedContact = await Contact.findOneAndUpdate({ $and: [{ owner }, { _id: contactId }] }, { favorite }, { runValidators: true, new: true });
   return updatedContact;
 };
 
