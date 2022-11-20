@@ -3,6 +3,7 @@ const {
   signup,
   login,
   patchSubscription,
+  logout,
   getCurrent,
 } = require("../../controllers/usersController");
 
