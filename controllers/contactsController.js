@@ -54,21 +54,20 @@ const {
     if (Object.keys(req.body).length === 0) {
       res.status(400).json({ message: 'missing field' });
       return;
-    }
-  
+    }  
     const updatedContact = await updateContact(contactId, _id, req.body);
-  
     if (!updatedContact) {
       res.status(400).json({ message: 'Not found' });
       return;
     }
     res.status(200).json({ message: 'success', contact: updatedContact });
   };
-
+  
   const updateStatusContactController = async (req, res) => {
     const { favorite } = req.body;
     const { contactId } = req.params;
     const { _id } = req.user;
+  
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json({ message: 'missing field favorite' });
     }
@@ -80,6 +79,7 @@ const {
     }
     res.status(200).json({ message: 'success', contact: updatedContact });
   };
+  
   
 module.exports = {
     listContactsController,

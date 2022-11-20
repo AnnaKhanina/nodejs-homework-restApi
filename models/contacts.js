@@ -35,7 +35,12 @@ const updateContact = async (contactId, owner, body) => {
 };
 
 const updateStatusContact = async (contactId, owner, favorite) => {
-  const updatedContact = await Contact.findOneAndUpdate({ $and: [{ owner }, { _id: contactId }] }, { favorite }, { runValidators: true, new: true });
+  const updatedContact = await Contact.findOneAndUpdate(
+    { $and: [{ owner }, { _id: contactId }] },
+    { favorite },
+    { runValidators: true, new: true }
+  );
+
   return updatedContact;
 };
 
