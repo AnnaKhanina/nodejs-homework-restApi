@@ -8,7 +8,7 @@ const listContacts = async (owner, page, limit, favorite) => {
         .limit((limit));
       return data;
     } else {
-      const data = await Contact.find({ owner }).skip(skip).limit(parseInt(limit));
+      const data = await Contact.find({ owner }).skip(skip).limit(limit);
       return data;
     }
   };

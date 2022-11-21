@@ -7,6 +7,8 @@ const {
     updateStatusContact,
   } = require('../models/contacts');
 
+  const { Contact } = require("..db/model");
+
   const listContactsController = async (req, res) => {
     const { _id } = req.user;
     const { page, limit, favorite } = req.query;
@@ -68,17 +70,29 @@ const {
     const { contactId } = req.params;
     const { _id } = req.user;
   
-    if (Object.keys(req.body).length === 0) {
-      return res.status(400).json({ message: 'missing field favorite' });
-    }
+    // if (Object.keys(req.body).length === 0) {
+    //   return res.status(400).json({ message: 'missing field favorite' });
+    // }
   
-    const updatedContact = await updateStatusContact(contactId, _id, favorite);
-    if (!updatedContact) {
-      res.status(400).json({ message: 'Not found' });
-      return;
-    }
-    res.status(200).json({ message: 'success', contact: updatedContact });
-  };
+  //   const updatedContact = await updateStatusContact(contactId, _id, favorite);
+  //   if (!updatedContact) {
+  //     res.status(400).json({ message: 'Not found' });
+  //     return;
+  //   }
+  //   res.status(200).json({ message: 'success', contact: updatedContact });
+
+  await Contact.findByIdAndUpdate(
+		{ _id: contactId, owner: _id },
+		{ favorite },
+		{ new: true }
+	);
+	const updatedContact = await Contact.findById(contactId);
+	if (updatedContact) {
+		return res.json(updatedContact);
+	} else {
+		return res.status(404).json({ message: "Not found" });
+	}
+   };
   
   
 module.exports = {
