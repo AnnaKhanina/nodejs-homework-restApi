@@ -42,6 +42,17 @@ const loginUser = async (email, password) => {
   return token;
 };
 
+const logoutUser = async ({ id, token }) => {
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: id, token },
+    { $set: { token: null } },
+    { new: true }
+  );
+  if (!updatedUser) {
+    throw new LoginAuthError("Not authorized");
+  };
+};
+
 const patchSubscriptionUser = async (id, subscription) => {
   await User.findByIdAndUpdate(id, { subscription }, { runValidators: true });
   const updatedUser = await User.findById(id).select({
@@ -64,6 +75,7 @@ const getCurrentUser = async (id) => {
 module.exports = {
   signupUser,
   loginUser,
+  logoutUser,
   patchSubscriptionUser,
   getCurrentUser,
 };

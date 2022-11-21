@@ -1,4 +1,7 @@
 const { Contact } = require('../db/model');
+const { NoDataError } = require("../helpers/errors");
+
+const select = '-_id -owner -__v';
 
 const listContacts = async (owner, page, limit, favorite) => {
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -34,14 +37,27 @@ const updateContact = async (contactId, owner, body) => {
   return updatedContact;
 };
 
-const updateStatusContact = async (contactId, owner, favorite) => {
-  const updatedContact = await Contact.findOneAndUpdate(
-    { $and: [{ owner }, { _id: contactId }] },
-    { favorite },
-    { runValidators: true, new: true }
-  );
+// const updateStatusContact = async (contactId, owner, favorite) => {
+//   const updatedContact = await Contact.findOneAndUpdate(
+//     { $and: [{ owner }, { _id: contactId }] },
+//     { favorite },
+//     { runValidators: true, new: true }
+//   );
 
-  return updatedContact;
+//   return updatedContact;
+// };
+
+const updateStatusContact = async ({ id, contactId, body }) => {
+  const { favorite } = body;
+  const contact = await Contact.findOneAndUpdate(
+    { _id: contactId, owner: id },
+    { $set: { favorite } },
+    { new: true, projection: select }
+  );
+  if (!contact) {
+    throw new NoDataError("The contact do not exist");
+  };
+  return contact;
 };
 
 module.exports = {
