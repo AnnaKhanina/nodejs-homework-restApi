@@ -12,15 +12,7 @@ class LoginAuthError extends Error {
   }
 }
 
-class NoDataError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = 400;
-  }
-}
-
 module.exports = {
   RegistrationConflictError,
   LoginAuthError,
-  NoDataError,
 };

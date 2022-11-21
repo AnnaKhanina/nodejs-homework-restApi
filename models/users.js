@@ -19,6 +19,7 @@ const signupUser = async (email, password) => {
   await user.save();
   return user;
 };
+
 const loginUser = async (email, password) => {
   const user = await User.findOne({ email });
 
@@ -40,17 +41,6 @@ const loginUser = async (email, password) => {
   await User.findByIdAndUpdate(user._id, { token }, { runValidators: true });
 
   return token;
-};
-
-const logoutUser = async ({ id, token }) => {
-  const updatedUser = await User.findOneAndUpdate(
-    { _id: id, token },
-    { $set: { token: null } },
-    { new: true }
-  );
-  if (!updatedUser) {
-    throw new LoginAuthError("Not authorized");
-  };
 };
 
 const patchSubscriptionUser = async (id, subscription) => {
@@ -75,7 +65,6 @@ const getCurrentUser = async (id) => {
 module.exports = {
   signupUser,
   loginUser,
-  logoutUser,
   patchSubscriptionUser,
   getCurrentUser,
 };
