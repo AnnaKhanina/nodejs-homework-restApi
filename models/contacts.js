@@ -34,10 +34,10 @@ const updateContact = async (contactId, owner, body) => {
   return updatedContact;
 };
 
-const updateStatusContact = async (contactId, body, userId) => {
+const updateStatusContact = async (id, contactId, body) => {
   const { favorite } = body;
   return await Contact.findOneAndUpdate(
-    { _id: contactId, owner: userId },
+    { _id: contactId, owner: id },
     {
       $set: { favorite },
     },
