@@ -67,20 +67,15 @@ const {
   const updateStatusContactController = async (req, res) => {
     const { favorite } = req.body;
     const { contactId } = req.params;
-    const { _id } = req.user;
-  
-    if (Object.keys(req.body).length === 0) {
+    const { _id } = req.user;  
+    if (!favorite) {
       return res.status(400).json({ message: 'missing field favorite' });
-    }
-  
-    const updatedContact = await updateStatusContact(contactId, _id, favorite);
+    }  
+    const updatedContact = await updateStatusContact(contactId, req.body, _id /*favorite*/);
     if (!updatedContact) {
-      res.status(400).json({ message: 'Not found' });
-      return;
-    }
-    res.status(200).json({ message: 'success', contact: updatedContact });
-
-    };
+      res.status(404).json({ message: 'Not found' });
+    } else return res.status(200).json(updatedContact);
+  };
   
   
 module.exports = {

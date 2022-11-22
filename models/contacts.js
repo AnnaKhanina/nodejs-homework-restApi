@@ -34,14 +34,15 @@ const updateContact = async (contactId, owner, body) => {
   return updatedContact;
 };
 
-const updateStatusContact = async (contactId, owner, favorite) => {
-  const updatedContact = await Contact.findOneAndUpdate(
-    { $and: [{ owner }, { _id: contactId }] },
-    { favorite },
-    { runValidators: true, new: true }
+const updateStatusContact = async (contactId, body, userId) => {
+  const { favorite } = body;
+  return await Contact.findOneAndUpdate(
+    { _id: contactId, owner: userId },
+    {
+      $set: { favorite },
+    },
+    { new: true }
   );
-
-  return updatedContact;
 };
 
 module.exports = {
