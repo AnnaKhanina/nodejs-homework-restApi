@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const { Contact } = require('../db/model');
 
 
