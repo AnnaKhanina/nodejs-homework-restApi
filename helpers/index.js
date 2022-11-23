@@ -1,20 +1,27 @@
-function tryCatchWrapper(endpointFn) {
-    return async (req, res, next) => {
-      try {
-        await endpointFn(req, res, next);
-      } catch (err) {
-        next(err);
-      }
-    };
-  }
-  
-  function createNotFoundHttpError() {
-    const err = new Error("Not Found");
-    err.status = 404;
-    return err;
-  }
-  
-  module.exports = {
-    tryCatchWrapper,
-    createNotFoundHttpError,
+const { RegistrationConflictError, LoginAuthError } = require("./errors");
+
+const tryCatchWrapper = (controller) => {
+  return (req, res, next) => {
+    controller(req, res).catch(next);
   };
+};
+
+const errorHandler = (err, req, res, next) => {
+  if (
+    err instanceof RegistrationConflictError ||
+    err instanceof LoginAuthError
+  ) {
+    return res.status(err.status).json({ message: err.message });
+  }
+  res.status(500).json({ message: err.message });
+};
+
+const registrationConflictError = (err, req, res, next) => {
+  res.status(409).json({ message: err.message });
+};
+
+module.exports = {
+  tryCatchWrapper,
+  errorHandler,
+  registrationConflictError,
+};
