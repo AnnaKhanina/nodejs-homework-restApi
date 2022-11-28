@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Jimp = require("jimp");
+const path = require("path");
+const fs = require("fs");
 const { User } = require("../db/userModel");
 const {
   RegistrationConflictError,
@@ -44,12 +47,11 @@ const loginUser = async (email, password) => {
 };
 
 const patchSubscriptionUser = async (id, subscription) => {
-  await User.findByIdAndUpdate(id, { subscription }, { runValidators: true });
-  const updatedUser = await User.findById(id).select({
-    email: 1,
-    subscription: 1,
-    _id: 0,
-  });
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    { subscription },
+    { runValidators: true, new: true }
+  ).select({ email: 1, subscription: 1, _id: 0 });
   return updatedUser;
 };
 
@@ -62,9 +64,37 @@ const getCurrentUser = async (id) => {
   return data;
 };
 
+const uploadUserAvatar = async (userId, filename) => {
+  Jimp.read(path.resolve(`./tmp/${filename}`), (err, avatar) => {
+    if (err) throw err;
+    avatar
+      .resize(250, 250)
+      .quality(60)
+      .greyscale()
+      .write(path.resolve(`./public/avatars/${filename}`));
+  });
+
+  fs.unlink(path.resolve(`./tmp/${filename}`), (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  });
+
+  const avatarURL = `avatars/${filename}`;
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { avatarURL },
+    { runValidators: true, new: true }
+  ).select({ avatarURL: 1, _id: 0 });
+  return updatedUser;
+};
+
 module.exports = {
   signupUser,
   loginUser,
   patchSubscriptionUser,
   getCurrentUser,
+  uploadUserAvatar,
 };
