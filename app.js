@@ -20,7 +20,7 @@ app.get("/", function (req, res) {
 
 app.use("/api/users", usersRouter);
 app.use("/api/contacts", contactsRouter);
-app.use("/avatars", avatarRouter);
+app.use("api/avatars", avatarRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
