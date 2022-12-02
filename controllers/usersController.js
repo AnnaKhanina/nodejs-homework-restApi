@@ -44,18 +44,10 @@ const logout = async (req, res) => {
   res.status(200).json({ message: "Success logout" });
 };
 
-// const patchUserAvatar = async (req, res) => {
-//   const { filename } = req.file;
-//   const { _id } = req.user;
-//   const updatedUser = await uploadUserAvatar(_id, filename);
-//   res.status(200).json({ status: "success", user: updatedUser });
-// };
-
 module.exports = {
   signup,
   login,
   patchSubscription,
   logout,
   getCurrent,
-  //patchUserAvatar,
 };

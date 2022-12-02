@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Jimp = require("jimp");
+const fs = require("fs/promises");
+const path = require("path");
 const { User } = require("../db/userModel");
 const {
   RegistrationConflictError,
@@ -61,34 +64,7 @@ const getCurrentUser = async (id) => {
   return data;
 };
 
-// const uploadUserAvatar = async (userId, filename) => {
-//   Jimp.read(path.resolve(`./tmp/${filename}`), (err, avatar) => {
-//     if (err) throw err;
-//     avatar
-//       .resize(250, 250)
-//       .quality(60)
-//       .greyscale()
-//       .write(path.resolve(`./public/avatars/${filename}`));
-//   });
-
-//   fs.unlink(path.resolve(`./tmp/${filename}`), (err) => {
-//     if (err) {
-//       console.error(err);
-//       return;
-//     }
-//   });
-
-//   const avatarURL = `avatars/${filename}`;
-
-//   const updatedUser = await User.findByIdAndUpdate(
-//     userId,
-//     { avatarURL },
-//     { runValidators: true, new: true }
-//   ).select({ avatarURL: 1, _id: 0 });
-//   return updatedUser;
-// };
-
-const uploadUserAvatar = async(req, res, next) {
+const uploadUserAvatar = async(req, res, next) => {
   const { user } = req;
   const { filename } = req.file;
   const avatarURL = `avatars/${filename}`;
@@ -108,7 +84,7 @@ const uploadUserAvatar = async(req, res, next) {
   ).select({ avatarURL: 1, _id: 0 });
 
   return res.status(200).json({ status: "success", updatedAvatar });
-}
+};
 
 module.exports = {
   signupUser,

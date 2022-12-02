@@ -25,7 +25,6 @@ router.post("/login", loginValidation, tryCatchWrapper(login));
 router.get("/logout", authMiddleware, tryCatchWrapper(logout));
 router.get("/current", authMiddleware, tryCatchWrapper(getCurrent));
 router.patch("/", authMiddleware, tryCatchWrapper(patchSubscription));
-//router.get("/avatars/:avatarId", express.static("./public/avatars"));
 
 router.patch(
   "/avatars",
