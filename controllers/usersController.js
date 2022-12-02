@@ -3,7 +3,7 @@ const {
   loginUser,
   patchSubscriptionUser,
   getCurrentUser,
-  uploadUserAvatar,
+  //uploadUserAvatar,
 } = require("../models/users");
 
 const { User } = require("../db/userModel");
@@ -44,12 +44,12 @@ const logout = async (req, res) => {
   res.status(200).json({ message: "Success logout" });
 };
 
-const patchUserAvatar = async (req, res) => {
-  const { filename } = req.file;
-  const { _id } = req.user;
-  const updatedUser = await uploadUserAvatar(_id, filename);
-  res.status(200).json({ status: "success", user: updatedUser });
-};
+// const patchUserAvatar = async (req, res) => {
+//   const { filename } = req.file;
+//   const { _id } = req.user;
+//   const updatedUser = await uploadUserAvatar(_id, filename);
+//   res.status(200).json({ status: "success", user: updatedUser });
+// };
 
 module.exports = {
   signup,
@@ -57,5 +57,5 @@ module.exports = {
   patchSubscription,
   logout,
   getCurrent,
-  patchUserAvatar,
+  //patchUserAvatar,
 };

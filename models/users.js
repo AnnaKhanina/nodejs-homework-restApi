@@ -1,8 +1,5 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const Jimp = require("jimp");
-const path = require("path");
-const fs = require("fs");
 const { User } = require("../db/userModel");
 const {
   RegistrationConflictError,
@@ -64,32 +61,54 @@ const getCurrentUser = async (id) => {
   return data;
 };
 
-const uploadUserAvatar = async (userId, filename) => {
-  Jimp.read(path.resolve(`./tmp/${filename}`), (err, avatar) => {
-    if (err) throw err;
-    avatar
-      .resize(250, 250)
-      .quality(60)
-      .greyscale()
-      .write(path.resolve(`./public/avatars/${filename}`));
-  });
+// const uploadUserAvatar = async (userId, filename) => {
+//   Jimp.read(path.resolve(`./tmp/${filename}`), (err, avatar) => {
+//     if (err) throw err;
+//     avatar
+//       .resize(250, 250)
+//       .quality(60)
+//       .greyscale()
+//       .write(path.resolve(`./public/avatars/${filename}`));
+//   });
 
-  fs.unlink(path.resolve(`./tmp/${filename}`), (err) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-  });
+//   fs.unlink(path.resolve(`./tmp/${filename}`), (err) => {
+//     if (err) {
+//       console.error(err);
+//       return;
+//     }
+//   });
 
+//   const avatarURL = `avatars/${filename}`;
+
+//   const updatedUser = await User.findByIdAndUpdate(
+//     userId,
+//     { avatarURL },
+//     { runValidators: true, new: true }
+//   ).select({ avatarURL: 1, _id: 0 });
+//   return updatedUser;
+// };
+
+const uploadUserAvatar = async(req, res, next) {
+  const { user } = req;
+  const { filename } = req.file;
   const avatarURL = `avatars/${filename}`;
+  const newPath = path.join(__dirname, "../public/avatars", req.file.filename);
+  await fs.rename(req.file.path, newPath);
+  Jimp.read(newPath, (err, avatar) => {
+    if (err) throw err;
+    avatar.resize(250, 250).quality(60).greyscale().write(newPath);
+  });
 
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    { avatarURL },
-    { runValidators: true, new: true }
+  const updatedAvatar = await User.findByIdAndUpdate(
+    user._id,
+    {
+      avatarURL,
+    },
+    { new: true }
   ).select({ avatarURL: 1, _id: 0 });
-  return updatedUser;
-};
+
+  return res.status(200).json({ status: "success", updatedAvatar });
+}
 
 module.exports = {
   signupUser,

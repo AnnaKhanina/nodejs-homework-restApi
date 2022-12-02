@@ -5,8 +5,9 @@ const {
   patchSubscription,
   logout,
   getCurrent,
-  patchUserAvatar,
-} = require("../../controllers/usersController");
+  } = require("../../controllers/usersController");
+
+const {uploadUserAvatar} = require("../../models/users");
 
 const { tryCatchWrapper } = require("../../helpers/index");
 const {
@@ -24,13 +25,13 @@ router.post("/login", loginValidation, tryCatchWrapper(login));
 router.get("/logout", authMiddleware, tryCatchWrapper(logout));
 router.get("/current", authMiddleware, tryCatchWrapper(getCurrent));
 router.patch("/", authMiddleware, tryCatchWrapper(patchSubscription));
-router.get("/avatars/:avatarId", express.static("./public/avatars"));
+//router.get("/avatars/:avatarId", express.static("./public/avatars"));
 
 router.patch(
   "/avatars",
   authMiddleware,
   uploadAvatarMiddleware.single("avatar"),
-  patchUserAvatar
+  tryCatchWrapper(uploadUserAvatar)
 );
 
 module.exports = router;
