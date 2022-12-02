@@ -67,7 +67,7 @@ const getCurrentUser = async (id) => {
 const uploadUserAvatar = async(req, res, next) => {
   const { user } = req;
   const { filename } = req.file;
-  const avatarURL = `avatars/${filename}`;
+  const avatarURL = `/avatars/${filename}`;
   const newPath = path.join(__dirname, "../public/avatars", req.file.filename);
   await fs.rename(req.file.path, newPath);
   Jimp.read(newPath, (err, avatar) => {
