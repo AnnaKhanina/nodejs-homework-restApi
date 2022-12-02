@@ -3,9 +3,10 @@ const {
   loginUser,
   patchSubscriptionUser,
   getCurrentUser,
+  //uploadUserAvatar,
 } = require("../models/users");
 
-const { User } = require('../db/userModel');
+const { User } = require("../db/userModel");
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -40,7 +41,7 @@ const getCurrent = async (req, res) => {
 const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: null }, { runValidators: true });
-  res.status(200).json({ message: 'Success logout' });
+  res.status(200).json({ message: "Success logout" });
 };
 
 module.exports = {

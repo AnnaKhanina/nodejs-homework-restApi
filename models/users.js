@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Jimp = require("jimp");
+const fs = require("fs/promises");
+const path = require("path");
 const { User } = require("../db/userModel");
 const {
   RegistrationConflictError,
@@ -44,12 +47,11 @@ const loginUser = async (email, password) => {
 };
 
 const patchSubscriptionUser = async (id, subscription) => {
-  await User.findByIdAndUpdate(id, { subscription }, { runValidators: true });
-  const updatedUser = await User.findById(id).select({
-    email: 1,
-    subscription: 1,
-    _id: 0,
-  });
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    { subscription },
+    { runValidators: true, new: true }
+  ).select({ email: 1, subscription: 1, _id: 0 });
   return updatedUser;
 };
 
@@ -62,9 +64,32 @@ const getCurrentUser = async (id) => {
   return data;
 };
 
+const uploadUserAvatar = async(req, res, next) => {
+  const { user } = req;
+  const { filename } = req.file;
+  const avatarURL = `/avatars/${filename}`;
+  const newPath = path.join(__dirname, "../public/avatars", req.file.filename);
+  await fs.rename(req.file.path, newPath);
+  Jimp.read(newPath, (err, avatar) => {
+    if (err) throw err;
+    avatar.resize(250, 250).quality(60).greyscale().write(newPath);
+  });
+
+  const updatedAvatar = await User.findByIdAndUpdate(
+    user._id,
+    {
+      avatarURL,
+    },
+    { new: true }
+  ).select({ avatarURL: 1, _id: 0 });
+
+  return res.status(200).json({ status: "success", updatedAvatar });
+};
+
 module.exports = {
   signupUser,
   loginUser,
   patchSubscriptionUser,
   getCurrentUser,
+  uploadUserAvatar,
 };
