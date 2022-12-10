@@ -3,7 +3,7 @@ const {
   loginUser,
   patchSubscriptionUser,
   getCurrentUser,
-  //uploadUserAvatar,
+
 } = require("../models/users");
 
 const { User } = require("../db/userModel");

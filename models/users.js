@@ -3,23 +3,111 @@ const bcrypt = require("bcrypt");
 const Jimp = require("jimp");
 const fs = require("fs/promises");
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
+const nodemailer = require("nodemailer");
 const { User } = require("../db/userModel");
 const {
   RegistrationConflictError,
   LoginAuthError,
+  VerificationError,
+  BadRequestError,
 } = require("../helpers/errors");
+
+
+const sendRegisterEmail = async({ email, verificationToken }) => {
+  const transport = nodemailer.createTransport({
+    host: "smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: process.env.USER,
+      pass: process.env.PASS,
+    },
+  });
+
+  const url = `localhost:3000/api/users/verify/${verificationToken}`;
+
+  const emailBody = {
+    from: "contactInfo@mail.com",
+    to: email,
+    subject: "Please verify your email",
+    html: `<h1> Please open this link: ${url} to verify your email <h1>`,
+    text: `Please open this link: ${url} to verify your email`,
+  };
+
+  const response = await transport.sendMail(emailBody);
+  console.log("Email sent", response);
+};
+
+const verifyEmail = async(req, res, next) => {
+  const { verificationToken } = req.params;
+
+  const user = await User.findOne({
+    verificationToken,
+  });
+
+  if (!user) {
+    throw new VerificationError("User not found");
+  }
+  if (!user.verify) {
+    await User.findByIdAndUpdate(user._id, {
+      verify: true,
+      verificationToken: null,
+    });
+    return res.json({
+      message: "Verification successful",
+    });
+  }
+  if (user.verify) {
+    return res.json({
+      message: "Your Email already verified",
+    });
+  }
+};
+
+const repeatedVerification = async(req, res, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  const { verificationToken } = user;
+
+  if (!email) {
+    res.status(400).json({ message: "missing required field email" });
+  }
+  if (!user) {
+    throw new VerificationError("User not found");
+  }
+  if (user.verify) {
+    throw new BadRequestError("Verification has already been passed");
+  }
+  if (!user.verify) {
+    await sendRegisterEmail({ email, verificationToken });
+    res.status(200).json({ message: "Verification email sent" });
+  }
+};
 
 const signupUser = async (email, password) => {
   if (await User.findOne({ email })) {
     throw new RegistrationConflictError("Email is use");
   }
 
+  const verificationToken = uuidv4();
+
   const user = new User({
     email,
     password,
+    verificationToken,
   });
 
-  await user.save();
+  try {
+    await user.save();
+    await sendRegisterEmail({ email, verificationToken });
+  } catch (error) {
+    if (error.message.includes("duplicate key error collection")) {
+      throw new RegistrationConflictError("Email in use");
+    }
+
+    throw error;
+  }
   return user;
 };
 
@@ -28,6 +116,10 @@ const loginUser = async (email, password) => {
 
   if (!user) {
     throw new LoginAuthError("Email or password is wrong");
+  }
+
+  if (!user.verify) {
+    throw new LoginAuthError("Email is not verified");
   }
 
   if (!(await bcrypt.compare(password, user.password))) {
@@ -92,4 +184,6 @@ module.exports = {
   patchSubscriptionUser,
   getCurrentUser,
   uploadUserAvatar,
+  verifyEmail,
+  repeatedVerification,
 };

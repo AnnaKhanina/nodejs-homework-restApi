@@ -7,7 +7,7 @@ const {
   getCurrent,
   } = require("../../controllers/usersController");
 
-const {uploadUserAvatar} = require("../../models/users");
+const {verifyEmail, repeatedVerification, uploadUserAvatar} = require("../../models/users");
 
 const { tryCatchWrapper } = require("../../helpers/index");
 const {
@@ -21,6 +21,11 @@ const {
 const router = express.Router();
 
 router.post("/signup", loginValidation, tryCatchWrapper(signup));
+router.get(
+  "/verify/:verificationToken",
+  tryCatchWrapper(verifyEmail)
+);
+router.post("/verify/", tryCatchWrapper(repeatedVerification));
 router.post("/login", loginValidation, tryCatchWrapper(login));
 router.get("/logout", authMiddleware, tryCatchWrapper(logout));
 router.get("/current", authMiddleware, tryCatchWrapper(getCurrent));
