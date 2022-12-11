@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
       next(new LoginAuthError("Not authorized"));
     }
     const user = jwt.decode(token, process.env.JWT_SECRET);
-    const auditUser = await User.findById(user._id);
+    const auditUser = await User.findById({ _id: user._id, varify: true });
 
     if (!auditUser || token !== auditUser.token) {
       throw new LoginAuthError("Not authorized");
