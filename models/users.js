@@ -67,16 +67,14 @@ const repeatedVerification = async(req, res, next) => {
 
   const user = await User.findOne({ email });
   const { verificationToken } = user;
-
-  if (!user) {
-    throw new VerificationError("User not found");
-  }
-  if (!email) {
-    res.status(400).json({ message: "missing required field email" });
-  }
+ 
   if (user.verify) {
     throw new BadRequestError("Verification has already been passed");
   }
+
+  if (!user) {
+      throw new VerificationError("User not found");
+    }
     await sendRegisterEmail({ email, verificationToken });
     res.status(200).json({ message: "Verification email sent" });
 };
