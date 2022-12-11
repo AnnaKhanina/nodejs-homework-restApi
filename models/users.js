@@ -57,11 +57,9 @@ const verifyEmail = async(req, res, next) => {
       message: "Verification successful",
     });
   }
-  if (user.verify) {
     return res.json({
       message: "Your Email already verified",
     });
-  }
 };
 
 const repeatedVerification = async(req, res, next) => {
@@ -70,19 +68,17 @@ const repeatedVerification = async(req, res, next) => {
   const user = await User.findOne({ email });
   const { verificationToken } = user;
 
-  if (!email) {
-    res.status(400).json({ message: "missing required field email" });
-  }
   if (!user) {
     throw new VerificationError("User not found");
+  }
+  if (!email) {
+    res.status(400).json({ message: "missing required field email" });
   }
   if (user.verify) {
     throw new BadRequestError("Verification has already been passed");
   }
-  if (!user.verify) {
     await sendRegisterEmail({ email, verificationToken });
     res.status(200).json({ message: "Verification email sent" });
-  }
 };
 
 const signupUser = async (email, password) => {
